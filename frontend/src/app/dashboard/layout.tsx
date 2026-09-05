@@ -40,7 +40,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           
           <div className="ml-auto flex items-center gap-4">
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <UserButton afterSignOutUrl="/" />
+              <UserButton />
             </motion.div>
           </div>
         </div>
