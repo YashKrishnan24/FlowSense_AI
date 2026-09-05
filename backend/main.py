@@ -1,12 +1,13 @@
 import os
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
+from typing import Optional
 # pyrefly: ignore [missing-import]
 from dotenv import load_dotenv
 load_dotenv()
 
 from models import AnalysisRequest, UXReport
-from gemini_service import analyze_ui_screenshot
+from gemini_service import analyze_ui_screenshot, analyze_ui_screenshot_bytes
 
 app = FastAPI(title="FlowSense AI Service")
 
@@ -31,9 +32,19 @@ def health_check():
     return {"status": "ok"}
 
 @app.post("/api/analysis", response_model=UXReport)
-async def perform_analysis(request: AnalysisRequest):
+async def perform_analysis(
+    image_url: Optional[str] = Form(None),
+    file: Optional[UploadFile] = File(None)
+):
     try:
-        report = await analyze_ui_screenshot(request.image_url)
+        if file:
+            image_bytes = await file.read()
+            mime_type = file.content_type
+            report = await analyze_ui_screenshot_bytes(image_bytes, mime_type)
+        elif image_url:
+            report = await analyze_ui_screenshot(image_url)
+        else:
+            raise HTTPException(status_code=400, detail="Must provide either image_url or file")
         return report
     except Exception as e:
         # In a real app, you'd log the exception and return a standard 500 error
