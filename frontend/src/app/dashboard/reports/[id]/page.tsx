@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { ArrowLeft, ArrowRight, AlertTriangle, CheckCircle2, ChevronRight, XCircle } from "lucide-react";
 import Link from "next/link";
 import { AnimatedScoreRing } from "@/components/AnimatedScoreRing";
+import { PrintWrapper } from "@/components/PrintWrapper";
 
 const prisma = new PrismaClient();
 
@@ -35,14 +36,6 @@ export default async function ReportPage({ params }: { params: { id: string } })
 
   const { report, recommendations } = analysis;
 
-  const recentHistory = await prisma.analysis.findMany({
-    where: { 
-      projectId: analysis.projectId, 
-      id: { not: id } 
-    },
-    orderBy: { createdAt: "desc" },
-    take: 3,
-  });
 
   return (
     <div className="space-y-8">
@@ -57,9 +50,10 @@ export default async function ReportPage({ params }: { params: { id: string } })
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        
-        {/* Left Column: Image & Markers */}
+      <PrintWrapper>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          
+          {/* Left Column: Image & Markers */}
         <div className="lg:col-span-7 space-y-6">
           <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
             <h2 className="text-xl font-medium mb-4">Analyzed Interface</h2>
@@ -138,64 +132,15 @@ export default async function ReportPage({ params }: { params: { id: string } })
             </div>
           </div>
 
-          {/* Audit History (Mini) */}
-          <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex flex-col">
-            <h2 className="text-xl font-medium mb-1">Audit History</h2>
-            <p className="text-sm text-gray-500 mb-6">Track your recent UX progress</p>
-            
-            {recentHistory.length > 0 ? (
-              <div className="flex flex-col gap-3">
-                {recentHistory.map((pastAudit) => (
-                  <Link
-                    key={pastAudit.id}
-                    href={`/dashboard/reports/${pastAudit.id}`}
-                    className="flex items-center justify-between p-4 rounded-2xl border border-gray-100 hover:border-blue-200 hover:bg-blue-50 hover:shadow-sm transition-all group"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-xl overflow-hidden bg-gray-100 border border-gray-200 group-hover:border-blue-300 transition-colors">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img 
-                          src={pastAudit.screenshotUrl} 
-                          alt="Thumbnail" 
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <div>
-                        <div className="text-sm font-semibold text-gray-900 group-hover:text-blue-700 transition-colors">
-                          {new Date(pastAudit.createdAt).toLocaleDateString()}
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          Score: {pastAudit.overallScore}/100
-                        </div>
-                      </div>
-                    </div>
-                    <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all" />
-                  </Link>
-                ))}
-              </div>
-            ) : (
-              <div className="flex-1 flex flex-col items-center justify-center p-6 text-center bg-gray-50 rounded-2xl border border-dashed border-gray-200">
-                <span className="text-sm text-gray-500">No previous audits found.</span>
-              </div>
-            )}
-            
-            <Link 
-              href="/dashboard/history"
-              className="mt-6 w-full py-3 rounded-xl bg-gray-50 text-gray-700 text-sm font-bold flex items-center justify-center gap-2 hover:bg-gray-100 hover:text-gray-900 transition-colors border border-gray-200"
-            >
-              View Full History <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-
         </div>
 
         {/* Bottom Full-width: Detailed Recommendations */}
         <div className="lg:col-span-12 space-y-6">
           <h2 className="text-2xl font-medium tracking-tight">Actionable Recommendations</h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 print:block">
             {recommendations.map((rec, idx) => (
-              <div key={rec.id} className="bg-white rounded-[2rem] p-8 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100 flex flex-col group">
+              <div key={rec.id} className="bg-white rounded-[2rem] p-8 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100 flex flex-col group break-inside-avoid print:break-inside-avoid print:mb-6">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
                     <div className="w-6 h-6 bg-black group-hover:bg-indigo-600 transition-colors text-white text-xs font-bold flex items-center justify-center rounded-full shadow-sm">
@@ -224,6 +169,7 @@ export default async function ReportPage({ params }: { params: { id: string } })
         </div>
 
       </div>
+      </PrintWrapper>
     </div>
   );
 }
