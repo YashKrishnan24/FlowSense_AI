@@ -1,5 +1,7 @@
 # FlowSense AI
 
+🌍 **Live Demo:** [https://flowsense-frontend-18uu.onrender.com](https://flowsense-frontend-18uu.onrender.com)
+
 An intelligent, full-stack application that provides instant, AI-driven User Experience (UX) audits for any interface. Just upload a screenshot of your website, app, or mockup, and FlowSense will analyze its design patterns, accessibility, and visual hierarchy to give you actionable feedback.
 
 ## 🚀 What it does
