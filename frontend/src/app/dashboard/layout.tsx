@@ -36,6 +36,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 New Audit
               </Link>
             </motion.div>
+            <motion.div whileHover={{ scale: 1.05, color: "#000" }} whileTap={{ scale: 0.95 }}>
+              <Link 
+                href="/dashboard/history" 
+                className={`px-4 py-2 rounded-lg transition-all ${pathname === "/dashboard/history" ? "bg-gray-100 text-black border border-gray-200 shadow-sm" : "hover:text-black hover:bg-gray-50"}`}
+              >
+                History
+              </Link>
+            </motion.div>
           </nav>
           
           <div className="ml-auto flex items-center gap-4">

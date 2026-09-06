@@ -1,6 +1,13 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { PrismaClient } from "@prisma/client";
+import { v2 as cloudinary } from "cloudinary";
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 const prisma = new PrismaClient();
 
@@ -51,12 +58,17 @@ export async function POST(req: Request) {
       });
     }
 
-    // 3. Create the Analysis
+    // 3. Upload image to Cloudinary
+    const uploadResponse = await cloudinary.uploader.upload(image, {
+      folder: "flowsense",
+    });
+
+    // 4. Create the Analysis
     const analysis = await prisma.analysis.create({
       data: {
         projectId: project.id,
         status: "COMPLETED",
-        screenshotUrl: image, // saving base64 here
+        screenshotUrl: uploadResponse.secure_url,
         overallScore: report.overall_score,
         accessibilityScore: report.accessibility_score,
         visualClarityScore: report.visual_clarity_score,
@@ -64,7 +76,7 @@ export async function POST(req: Request) {
       }
     });
 
-    // 4. Create Recommendations
+    // 5. Create Recommendations
     if (report.recommendations && report.recommendations.length > 0) {
       await prisma.recommendation.createMany({
         data: report.recommendations.map((rec: any) => ({
@@ -80,7 +92,7 @@ export async function POST(req: Request) {
       });
     }
 
-    // 5. Create Report Summary
+    // 6. Create Report Summary
     await prisma.report.create({
       data: {
         analysisId: analysis.id,

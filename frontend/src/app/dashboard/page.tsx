@@ -62,7 +62,7 @@ export default async function DashboardPage() {
               Analyze New UI
             </Link>
             <Link 
-              href="#recent-audits"
+              href="/dashboard/history"
               className="bg-white text-gray-900 border border-gray-200 px-8 py-4 rounded-full font-bold hover:bg-gray-50 hover:scale-105 transition-all shadow-sm"
             >
               View Previous Audits
@@ -213,7 +213,7 @@ export default async function DashboardPage() {
               ))}
             </div>
             <div className="bg-gray-50 p-4 text-center border-t border-gray-100">
-              <Link href="#recent-audits" className="text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors">View All History →</Link>
+              <Link href="/dashboard/history" className="text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors">View All History →</Link>
             </div>
           </div>
         )}
