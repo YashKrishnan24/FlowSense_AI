@@ -44,7 +44,9 @@ export default function AnalyzePage() {
       formData.append("file", file);
 
       // We default to localhost:8000 for local Python backend
-      const pythonApiUrl = process.env.NEXT_PUBLIC_PYTHON_API_URL || "http://127.0.0.1:8000/api/analysis";
+      const pythonApiUrl = process.env.NEXT_PUBLIC_API_URL 
+        ? `${process.env.NEXT_PUBLIC_API_URL}/api/analysis`
+        : "http://127.0.0.1:8000/api/analysis";
       
       const analysisResponse = await axios.post(pythonApiUrl, formData, {
         headers: {
