@@ -23,7 +23,7 @@ This project is separated into a modern frontend architecture and a lightweight,
 
 **Backend (Python)**
 * **Framework:** FastAPI
-* **AI Engine:** Google Gemini Pro Vision API
+* **AI Engine:** Gemini-3.1-flash-lite
 * **Image Processing:** Pillow & Cloudinary
 * **Hosting:** Render
 
