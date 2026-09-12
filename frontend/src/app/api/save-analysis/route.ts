@@ -86,8 +86,8 @@ export async function POST(req: Request) {
           category: rec.category,
           description: rec.description,
           suggestedFix: rec.suggested_fix,
-          markerX: rec.coordinates ? rec.coordinates[0] : null,
-          markerY: rec.coordinates ? rec.coordinates[1] : null,
+          markerX: rec.marker_x ?? null,
+          markerY: rec.marker_y ?? null,
         }))
       });
     }
@@ -102,8 +102,9 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ success: true, analysisId: analysis.id });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Save analysis error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    require('fs').writeFileSync('d:/FlowSense2/frontend/error.log', String(error?.stack || error?.message || error));
+    return NextResponse.json({ error: "Internal server error", details: error?.message }, { status: 500 });
   }
 }
